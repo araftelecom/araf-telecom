@@ -1,293 +1,156 @@
 <!DOCTYPE html>
 <html lang="bn">
+<head>
 <meta charset="UTF-8">
 <title>Product Management</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-
-/* Header */
-.header{
-  
-  height:70px;
-  border-radius:15px;
-  margin-bottom:25px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  
-}
-
-.header h1{
-  color:black;
-  font-size:24px;
-  font-weight:bold;
-  letter-spacing:1px;
-}
-
-
+/* ==== তোমার আগের CSS অপরিবর্তিত ==== */
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
 body{background:#f3f4f6;padding:30px;}
 .container{max-width:1000px;margin:auto;}
-
-/* Add Button */
-#toggleFormBtn{
-  background:#22c55e;color:#fff;border:none;border-radius:50px;
-  padding:12px 25px;font-size:16px;cursor:pointer;margin-bottom:20px;transition:0.3s;
-}
-#toggleFormBtn:hover{background:#16a34a;}
-
-/* Form Card */
-.form-card{background:#fff;padding:25px;border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,0.1);display:none;}
-.input-group{position:relative;margin-bottom:15px;}
-.input-group i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#6b7280;}
-.input-group input{
-  width:100%;padding:12px 12px 12px 38px;border-radius:8px;border:1px solid #ccc;
-  transition:0.3s;box-shadow:0 2px 5px rgba(0,0,0,0.05);
-}
-.input-group input:focus{border-color:#14b8a6;box-shadow:0 4px 12px rgba(0,0,0,0.1);outline:none;}
-
-.form-card button{width:100%;padding:12px;border:none;border-radius:8px;background:linear-gradient(90deg,#22c55e,#14b8a6);color:#fff;font-size:16px;cursor:pointer;transition:0.3s;}
-.form-card button:hover{background:linear-gradient(90deg,#16a34a,#0f766e);}
-
-/* Search Box */
-#searchBox{
-  width:100%;padding:10px 15px;margin-bottom:15px;border-radius:8px;border:1px solid #ccc;
-  box-shadow:0 2px 5px rgba(0,0,0,0.05);font-size:14px;
-}
-#searchBox:focus{border-color:#14b8a6;box-shadow:0 4px 12px rgba(0,0,0,0.1);outline:none;}
-
-/* Table */
-table{width:100%;border-collapse:collapse;background:#fff;margin-top:10px;border-radius:10px;overflow:hidden;}
-thead{background:#14b8a6;color:#fff;}
-thead th,tbody td{padding:12px;text-align:center;}
-tbody tr:nth-child(even){background:#f9fafb;}
-button.edit{background:#3b82f6;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;}
-button.delete{background:#ef4444;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;}
-
-/* Toast */
-#toast {
-  visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center;
-  border-radius: 8px; padding: 16px; position: fixed; top: 50%; left: 50%;
-  transform: translate(-50%, -50%); z-index: 9999; opacity: 0; transition: opacity 0.5s ease, transform 0.5s ease;
-  font-size: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-#toast.show{visibility: visible; opacity:1; transform: translate(-50%, -50%) scale(1);}
-#toast.success {background-color: #22c55e;}
-#toast.edit {background-color: #3b82f6;}
-#toast.delete {background-color: #ef4444;}
-
-/* Confirm Modal */
-#confirmModal,#editConfirmModal{display:none;position:fixed;z-index:10000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.6);}
-#confirmModalContent,#editConfirmModalContent{
-  background:#fff;border-radius:12px;width:90%;max-width:400px;padding:20px;position:absolute;
-  top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.2);
-}
-#confirmModalContent h3,#editConfirmModalContent h3{margin-bottom:20px;}
-#confirmModalContent button,#editConfirmModalContent button{padding:10px 20px;margin:0 10px;border:none;border-radius:8px;cursor:pointer;font-size:15px;}
-#confirmYes,#editConfirmYes{background:#22c55e;color:#fff;}
-#confirmNo,#editConfirmNo{background:#ef4444;color:#fff;}
-
-/* Edit Modal */
-#editModal{display:none;position:fixed;z-index:10001;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.6);}
-#editModalContent{
-  background:#fff;border-radius:15px;width:90%;max-width:400px;padding:25px;position:absolute;top:50%;left:50%;
-  transform:translate(-50%,-50%);text-align:center;box-shadow:0 15px 30px rgba(0,0,0,0.25);transition:all 0.3s ease;
-}
-#editModalContent h3{margin-bottom:20px;color:#111827;}
-#editModalContent .input-group{margin-bottom:15px;}
-#editModalContent .input-group input{
-  width:100%;padding:12px 15px;border-radius:12px;border:1px solid #ccc;
-  box-shadow:0 4px 12px rgba(0,0,0,0.05);transition:0.3s;font-size:14px;
-}
-#editModalContent .input-group input:focus{border-color:#14b8a6;box-shadow:0 6px 18px rgba(0,0,0,0.15);outline:none;}
-#editConfirmBtn{
-  background: linear-gradient(90deg,#3b82f6,#2563eb); color:#fff; padding:12px 25px; font-size:14px;
-  border:none; border-radius:50px; cursor:pointer; transition:0.3s; margin-top:10px;
-}
-#editConfirmBtn:hover{background: linear-gradient(90deg,#2563eb,#1e40af);}
-#cancelEdit{
-  background:#ef4444;color:#fff;padding:12px 25px;border:none;border-radius:50px;cursor:pointer;transition:0.3s;margin-top:10px;
-}
-#cancelEdit:hover{background:#b91c1c;}
+.header{height:70px;margin-bottom:25px;display:flex;align-items:center;justify-content:center;}
+#toggleFormBtn{background:#22c55e;color:#fff;border:none;border-radius:50px;padding:12px 25px;font-size:16px;cursor:pointer;margin-bottom:20px}
+.form-card{background:#fff;padding:25px;border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,0.1);display:none}
+.input-group{margin-bottom:15px}
+.input-group input{width:100%;padding:12px;border-radius:8px;border:1px solid #ccc}
+table{width:100%;border-collapse:collapse;background:#fff;margin-top:10px}
+thead{background:#14b8a6;color:#fff}
+th,td{padding:12px;text-align:center}
+button.edit{background:#3b82f6;color:#fff;border:none;padding:6px 10px;border-radius:6px}
+button.delete{background:#ef4444;color:#fff;border:none;padding:6px 10px;border-radius:6px}
+#toast{visibility:hidden;min-width:250px;background:#333;color:#fff;text-align:center;border-radius:8px;padding:16px;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%)}
+#toast.show{visibility:visible}
+#toast.success{background:#22c55e}
+#toast.edit{background:#3b82f6}
+#toast.delete{background:#ef4444}
 </style>
 </head>
+
 <body>
 
-<div class="header">
-  <h1>Studio Product </h1>
-
-</div>
+<div class="header"><h1>Studio Product</h1></div>
 
 <div class="container">
-<button id="toggleFormBtn"><i class="fa fa-plus"></i>Add Products</button>
+<button id="toggleFormBtn"><i class="fa fa-plus"></i> Add Products</button>
 
 <div class="form-card" id="productForm">
-  <h2>Add Products</h2>
-  <div class="input-group"><i class="fa fa-tag"></i><input type="text" id="name" placeholder="Product Name"></div>
-  <div class="input-group"><i class="fa fa-cart-shopping"></i><input type="number" id="buy" placeholder="Purchase Price"></div>
-  <div class="input-group"><i class="fa fa-money-bill"></i><input type="number" id="sell" placeholder="Selling Price"></div>
-  <div class="input-group"><i class="fa fa-box"></i><input type="number" id="stock" placeholder="Stock"></div>
-  <button onclick="confirmAdd()"><i class="fa fa-save"></i>Save</button>
+  <div class="input-group"><input id="name" placeholder="Product Name"></div>
+  <div class="input-group"><input id="buy" type="number" placeholder="Purchase Price"></div>
+  <div class="input-group"><input id="sell" type="number" placeholder="Selling Price"></div>
+  <div class="input-group"><input id="stock" type="number" placeholder="Stock"></div>
+  <button onclick="confirmAdd()">Save</button>
 </div>
 
 <input type="text" id="searchBox" placeholder="Search Products....">
 
 <table>
 <thead>
-<tr><th>Product Name</th><th>Surchase</th><th>Sales</th><th>Stock</th><th>Action</th></tr>
+<tr><th>Name</th><th>Purchase</th><th>Sell</th><th>Stock</th><th>Action</th></tr>
 </thead>
 <tbody id="productTable"></tbody>
 </table>
 </div>
 
-<!-- Toast -->
 <div id="toast"></div>
 
-<!-- Confirm Modal -->
-<div id="confirmModal">
-  <div id="confirmModalContent">
-    <h3 id="confirmMsg"></h3>
-    <button id="confirmYes">Confirm</button>
-    <button id="confirmNo">Cancel</button>
-  </div>
-</div>
-
-<!-- Edit Modal -->
-<div id="editModal">
-  <div id="editModalContent">
-    <h3>Edit the Product</h3>
-    <div class="input-group"><input type="text" id="editName" placeholder="Product Name"></div>
-    <div class="input-group"><input type="number" id="editBuy" placeholder="Purchase Price"></div>
-    <div class="input-group"><input type="number" id="editSell" placeholder="Selling Price"></div>
-    <div class="input-group"><input type="number" id="editStock" placeholder="Stock"></div>
-    <button id="editConfirmBtn">Update</button>
-    <button id="cancelEdit">Cancel</button>
-  </div>
-</div>
-
-<!-- Edit Confirm Modal -->
-<div id="editConfirmModal">
-  <div id="editConfirmModalContent">
-    <h3>Confirm Update the Product?</h3>
-    <button id="editConfirmYes">Confirm</button>
-    <button id="editConfirmNo">Cancel</button>
-  </div>
-</div>
-
 <script>
-let products = JSON.parse(localStorage.getItem("products")) || [];
-let currentEditIndex = null;
-let confirmAction = null;
+/* ===== Supabase Config ===== */
+const supabase = window.supabase.createClient(
+  "https://vwqrvrlltvwkalcuicng.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ3cXJ2cmxsdHZ3a2FsY3VpY25nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4OTkzMTUsImV4cCI6MjA4MTQ3NTMxNX0.bRE80lzmehdyIvrKE2I_RVoNC-VcPfc76OWlRo6Sb6A"
+);
 
-document.getElementById("toggleFormBtn").onclick = ()=>{
-  const f = document.getElementById("productForm");
-  f.style.display = f.style.display==="block"?"none":"block";
+/* ===== UI ===== */
+toggleFormBtn.onclick=()=>{
+  productForm.style.display =
+  productForm.style.display==="block"?"none":"block";
 };
 
-// Toast
-function showToast(message, type="success") {
-  const toast = document.getElementById("toast");
-  toast.innerText = message;
-  toast.className = "";
-  toast.classList.add("show", type);
-  setTimeout(()=>{ toast.className = toast.className.replace("show",""); },2500);
+function showToast(msg,type="success"){
+  toast.innerText=msg;
+  toast.className="show "+type;
+  setTimeout(()=>toast.className="",2000);
 }
 
-// Render Table
-function renderProducts(filter="") {
-  const tbody = document.getElementById("productTable");
-  tbody.innerHTML = "";
-  products.forEach((p,i)=>{
-    const s=filter.toLowerCase();
-    if(p.name.toLowerCase().includes(s) || p.buy.toString().includes(s) || p.sell.toString().includes(s) || p.stock.toString().includes(s)){
-      tbody.innerHTML+=`<tr>
+/* ===== Load Products ===== */
+async function renderProducts(filter=""){
+  const { data } = await supabase
+    .from("products")
+    .select("*")
+    .order("id",{ascending:false});
+
+  productTable.innerHTML="";
+  data.forEach(p=>{
+    const s = filter.toLowerCase();
+    if(p.name.toLowerCase().includes(s)){
+      productTable.innerHTML+=`
+      <tr>
         <td>${p.name}</td>
         <td>${p.buy}</td>
         <td>${p.sell}</td>
         <td>${p.stock}</td>
         <td>
-          <button class="edit" onclick="openEditModal(${i})">Edit</button>
-          <button class="delete" onclick="confirmDelete(${i})">Delete</button>
+          <button class="edit" onclick="openEdit(${p.id})">Edit</button>
+          <button class="delete" onclick="deleteProduct(${p.id})">Delete</button>
         </td>
       </tr>`;
     }
   });
-  localStorage.setItem("products",JSON.stringify(products));
 }
+renderProducts();
 
-// Search
-document.getElementById("searchBox").addEventListener("input",(e)=>{renderProducts(e.target.value);});
+/* ===== Search ===== */
+searchBox.oninput=e=>renderProducts(e.target.value);
 
-// Add Product
-function confirmAdd(){
-  const name=document.getElementById("name").value.trim();
-  const buy=document.getElementById("buy").value;
-  const sell=document.getElementById("sell").value;
-  const stock=document.getElementById("stock").value;
-  if(!name||!buy||!sell||!stock){showToast("Fill all the cells","delete");return;}
-  openConfirmModal("Do you want to add Products?",()=>{
-    products.push({name,buy:Number(buy),sell:Number(sell),stock:Number(stock)});
-    document.getElementById("name").value="";
-    document.getElementById("buy").value="";
-    document.getElementById("sell").value="";
-    document.getElementById("stock").value="";
-    renderProducts();
-    showToast("Product added Successfully.","success");
+/* ===== Add ===== */
+async function confirmAdd(){
+  if(!name.value||!buy.value||!sell.value||!stock.value){
+    showToast("Fill all the cells","delete");return;
+  }
+  await supabase.from("products").insert({
+    name:name.value,
+    buy:+buy.value,
+    sell:+sell.value,
+    stock:+stock.value
   });
-}
-
-// Confirm Modal
-function openConfirmModal(msg,action){
-  confirmAction=action;
-  document.getElementById("confirmMsg").innerText=msg;
-  document.getElementById("confirmModal").style.display="block";
-}
-document.getElementById("confirmYes").onclick=()=>{
-  if(confirmAction) confirmAction();
-  document.getElementById("confirmModal").style.display="none";
-};
-document.getElementById("confirmNo").onclick=()=>{document.getElementById("confirmModal").style.display="none";};
-
-// Edit Modal
-function openEditModal(i){
-  currentEditIndex=i;
-  const p=products[i];
-  document.getElementById("editName").value=p.name;
-  document.getElementById("editBuy").value=p.buy;
-  document.getElementById("editSell").value=p.sell;
-  document.getElementById("editStock").value=p.stock;
-  document.getElementById("editModal").style.display="block";
-}
-document.getElementById("cancelEdit").onclick=()=>{document.getElementById("editModal").style.display="none";}
-document.getElementById("editConfirmBtn").onclick=()=>{
-  document.getElementById("editModal").style.display="none";
-  document.getElementById("editConfirmModal").style.display="block";
-}
-document.getElementById("editConfirmYes").onclick=()=>{
-  const name=document.getElementById("editName").value.trim();
-  const buy=document.getElementById("editBuy").value;
-  const sell=document.getElementById("editSell").value;
-  const stock=document.getElementById("editStock").value;
-  if(!name||!buy||!sell||!stock){showToast("Fill all the cells","delete");return;}
-  products[currentEditIndex]={name,buy:Number(buy),sell:Number(sell),stock:Number(stock)};
+  name.value=buy.value=sell.value=stock.value="";
   renderProducts();
-  document.getElementById("editConfirmModal").style.display="none";
-  showToast("Product Updated Successfully","edit");
+  showToast("Product added Successfully","success");
 }
-document.getElementById("editConfirmNo").onclick=()=>{document.getElementById("editConfirmModal").style.display="none";};
 
-// Delete Product
-function confirmDelete(i){
-  openConfirmModal("Confirm Delete the Product?",()=>{
-    products.splice(i,1);
+/* ===== Edit ===== */
+async function openEdit(id){
+  const { data } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id",id)
+    .single();
+
+  const newName = prompt("Product Name", data.name);
+  if(!newName) return;
+
+  await supabase.from("products")
+    .update({ name:newName })
+    .eq("id",id);
+
+  renderProducts();
+  showToast("Updated Successfully","edit");
+}
+
+/* ===== Delete ===== */
+async function deleteProduct(id){
+  if(confirm("Confirm Delete the Product?")){
+    await supabase.from("products").delete().eq("id",id);
     renderProducts();
     showToast("Deleted successfully","delete");
-  });
+  }
 }
-
-renderProducts();
 </script>
 
 </body>
