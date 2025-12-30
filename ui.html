@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centered Buttons</title>
+
+<style>
+body {
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#f0f2f5;
+  text-align:center;
+}
+
+/* Header */
+header{
+  background:#ffffff;
+  padding:18px 0;
+  box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+.site-name{
+  font-size:26px;
+  font-weight:bold;
+  color:#333;
+}
+
+/* Category Box */
+.category-block{
+  background:#ffffff;
+  max-width:1200px;
+  margin:25px auto;
+  padding:25px 15px 30px;
+  border-radius:14px;
+  box-shadow:0 3px 8px rgba(0,0,0,0.15);
+}
+
+/* Category Title */
+.category-title{
+  display:inline-block;
+  padding:8px 22px;
+  font-size:20px;
+  font-weight:bold;
+  color:#333;
+  background:linear-gradient(90deg,#f1f3f6,#ffffff);
+  border-radius:30px;
+  margin-bottom:25px;
+}
+
+/* FLEX CONTAINER */
+.circle-links-container{
+  display:flex;
+  flex-wrap:wrap;          /* wrap to next line */
+  justify-content:center;   /* ⭐ always center */
+  gap:25px;
+}
+
+/* Circle Button Wrapper */
+.circle-link-wrapper{
+  text-align:center;
+  flex:0 0 80px; /* fixed width */
+}
+
+/* Circle Button */
+.circle-link{
+  width:80px;
+  height:80px;
+  background:#ffffff;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  box-shadow:0 2px 4px rgba(0,0,0,0.2);
+  margin:auto;
+  transition: all 0.3s ease;
+}
+
+/* Hover Effect */
+.circle-link:hover{
+  transform: scale(1.1);
+  box-shadow:0 5px 12px rgba(0,0,0,0.35);
+}
+
+.circle-link img{
+  width:80px;
+  height:80px;
+  object-fit:contain;
+}
+
+.circle-link-wrapper span{
+  display:block;
+  margin-top:8px;
+  font-size:14px;
+  font-weight:bold;
+  color:#333;
+}
+
+/* Mobile */
+@media(max-width:768px){
+  .circle-link-wrapper{
+    flex:0 0 65px;
+  }
+  .circle-link{
+    width:65px;
+    height:65px;
+  }
+  .circle-link img{
+    width:30px;
+    height:30px;
+  }
+  .circle-link-wrapper span{
+    font-size:12px;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="site-name">সেবা লিংক সমূহ</div>
+</header>
+
+<div class="category-block">
+  <div class="category-title">সরকারী সেবা সমূহ</div>
+
+  <div class="circle-links-container">
+    <div class="circle-link-wrapper">
+      <a class="circle-link" href="https://services.nidw.gov.bd" target="_blank" rel="noopener noreferrer">
+        <img src="https://vwqrvrlltvwkalcuicng.supabase.co/storage/v1/object/public/product-images/NID.png">
+      </a>
+      <span>NID আবেদন</span>
+    </div>
+    
+    <div class="circle-link-wrapper">
+      <a class="circle-link" href="https://bdris.gov.bd" target="_blank" rel="noopener noreferrer">
+        <img src="https://vwqrvrlltvwkalcuicng.supabase.co/storage/v1/object/public/product-images/Birth%20aplay.png">
+      </a>
+      <span>জন্ম নিবন্ধন আবেদন</span>
+    </div>
+    
+     <div class="circle-link-wrapper">
+      <a class="circle-link" href="https://everify.bdris.gov.bd/" target="_blank" rel="noopener noreferrer">
+        <img src="https://vwqrvrlltvwkalcuicng.supabase.co/storage/v1/object/public/product-images/Birth%20Chek.png">
+      </a>
+      <span>জন্ম নিবন্ধন যাচাই</span>
+    </div>
+    
+      
+    <div class="circle-link-wrapper">
+      <a class="circle-link" href="https://dlrms.land.gov.bd/" target="_blank" rel="noopener noreferrer">
+        <img src="https://vwqrvrlltvwkalcuicng.supabase.co/storage/v1/object/public/product-images/Khotain.png">
+      </a>
+      <span>খতিয়ান আবেদন</span>
+    </div>
+
+<div class="circle-link-wrapper">
+      <a class="circle-link" href="https://mutation.land.gov.bd/" target="_blank" rel="noopener noreferrer">
+        <img src="https://vwqrvrlltvwkalcuicng.supabase.co/storage/v1/object/public/product-images/meutesan.png">
+      </a>
+      <span>মিউটেশন DCR</span>
+    </div>
+
+<div class="circle-link-wrapper">
+      <a class="circle-link" href="https://e-porcha.com/mouza-map" target="_blank" rel="noopener noreferrer">
+        <img src="https://vwqrvrlltvwkalcuicng.supabase.co/storage/v1/object/public/product-images/Khotain.png">
+      </a>
+      <span>মৌজা ম্যাপ</span>
+    </div>
+
+<div class="circle-link-wrapper">
+      <a class="circle-link" href="https://settlement.gov.bd/khatian/search" target="_blank" rel="noopener noreferrer">
+        <img src="https://vwqrvrlltvwkalcuicng.supabase.co/storage/v1/object/public/product-images/result.png">
+      </a>
+      <span>ভূমি রেকর্ড ও জরিপ</span>
+    </div>
+
+
+  
+    <div class="circle-link-wrapper">
+      <a class="circle-link" href="https://gsa.teletalk.com.bd/" target="_blank" rel="noopener noreferrer">
+        <img src="https://vwqrvrlltvwkalcuicng.supabase.co/storage/v1/object/public/product-images/School.png">
+      </a>
+      <span>স্কুল ভর্তি</span>
+    </div>
+
+<div class="circle-links-container">
+    <div class="circle-link-wrapper">
+      <a class="circle-link" href="http://www.educationboardresults.gov.bd/" target="_blank" rel="noopener noreferrer">
+        <img src="https://vwqrvrlltvwkalcuicng.supabase.co/storage/v1/object/public/product-images/result.png">
+      </a>
+      <span>SSC/HSC রেজাল</span>
+    </div>
+
+
+<div class="circle-links-container">
+    <div class="circle-link-wrapper">
+      <a class="circle-link" href="https://eboardresults.com/v2/home?lang=en" target="_blank" rel="noopener noreferrer">
+        <img src="https://vwqrvrlltvwkalcuicng.supabase.co/storage/v1/object/public/product-images/result.png">
+      </a>
+      <span>SSC/HSC মার্কসিট</span>
+    </div>
+
+  </div>
+</div>
+  <div class="circle-links-container">
+    <div class="circle-link-wrapper">
+      <a class="circle-link" href="https://forms.portal.gov.bd/site/view/category_content/%E0%A6%85%E0%A6%B0%E0%A7%8D%E0%A6%A5_%E0%A6%93_%E0%A6%AC%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%82%E0%A6%95" target="_blank" rel="noopener noreferrer">
+        <img src="https://vwqrvrlltvwkalcuicng.supabase.co/storage/v1/object/public/product-images/result.png">
+      </a>
+      <span>বাংলদেশ ফরম</span>
+    </div>
+
+<div class="circle-links-container">
+    <div class="circle-link-wrapper">
+      <a class="circle-link" href="http://sainik.teletalk.com.bd/" target="_blank" rel="noopener noreferrer">
+        <img src="https://vwqrvrlltvwkalcuicng.supabase.co/storage/v1/object/public/product-images/Aemy.png">
+      </a>
+      <span>সেনাবাহিনী আবেদন</span>
+    </div>
+
+
+  </div>
+</div>
+  
+</body>
+</html>
+
+

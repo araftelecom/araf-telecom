@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- CACHE & BACK BUTTON CONTROL -->
+<meta http-equiv="Cache-Control" content="no-store">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<script>
+/* 🔒 LOGIN CHECK */
+function checkAuth(){
+  if(!sessionStorage.getItem("isLoggedIn")){
+    window.location.replace("login.html");
+  }
+}
+checkAuth();
+
+/* 🔥 Chrome Back Button Fix */
+window.addEventListener("pageshow", function (event) {
+  if (event.persisted) {
+    checkAuth();
+  }
+});
+</script>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
+
+body{
+  display:flex;
+  height:100vh;
+  background:#eef3f7;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar{
+  width:160px;
+  background:#fff;
+  padding:2px;
+  border-radius:10px;
+  margin:2px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.12);
+  display:flex;
+  flex-direction:column;
+}
+
+.admin-box{
+  text-align:center;
+  padding:20px 10px;
+  border-bottom:1px solid #e5e5e5;
+  margin-bottom:15px;
+}
+
+.admin-box img{
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  object-fit:cover;
+  box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+.admin-box h3{
+  margin-top:10px;
+  font-size:16px;
+}
+
+.menu{
+  flex:1;
+  overflow-y:auto;
+}
+
+.menu a{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 10px;
+  margin-bottom:6px;
+  text-decoration:none;
+  color:#444;
+  border-radius:20px;
+  cursor:pointer;
+}
+
+.menu a:hover{
+  color:red;
+}
+
+/* ===== Dropdown ===== */
+.dropdown{
+  display:none;
+  margin-left:26px;
+}
+
+.dropdown a{
+  font-size:13px;
+  padding:5px 8px;
+  margin-bottom:5px;
+  color:#555;
+}
+
+/* ================= MAIN ================= */
+.main{
+  flex:1;
+  padding:15px;
+}
+
+iframe{
+  width:100%;
+  height:100%;
+  border:none;
+  border-radius:16px;
+  background:#fff;
+  box-shadow:0 6px 16px rgba(0,0,0,0.12);
+}
+
+/* ================= LOGOUT MODAL ================= */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.45);
+  backdrop-filter:blur(3px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+
+.modal{
+  background:#fff;
+  width:320px;
+  padding:25px;
+  border-radius:14px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,0.25);
+}
+
+.modal i{
+  font-size:40px;
+  color:#e74c3c;
+  margin-bottom:10px;
+}
+
+.modal-buttons{
+  display:flex;
+  gap:10px;
+}
+
+.modal-buttons button{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+}
+
+.btn-cancel{background:#e0e0e0;}
+.btn-logout{background:#e74c3c;color:#fff;}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+  <div class="admin-box">
+    <img src="https://i.imgur.com/0y0y0y0.png">
+    <h3>Admin</h3>
+  </div>
+
+  <div class="menu">
+
+    <a onclick="openPage('dashboard.html')">
+      <i class="fa fa-chart-line"></i> Dashboard
+    </a>
+
+    <a onclick="toggleSettings()">
+      <i class="fa fa-box"></i> Products
+      <i class="fa fa-angle-down" style="margin-left:auto"></i>
+    </a>
+
+    <div class="dropdown" id="settingsDropdown">
+      <a onclick="openPage('product/electric.html')">Electric</a>
+      <a onclick="openPage('product/telecom.html')">Telecom</a>
+      <a onclick="openPage('product/studio.html')">Studio</a>
+      <a onclick="openPage('preferences.html')">Computer</a>
+    </div>
+
+    <!-- Logout -->
+    <a onclick="openLogoutModal()">
+      <i class="fa fa-right-from-bracket"></i> Logout
+    </a>
+
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <iframe id="contentFrame" src="dashboard.html"></iframe>
+</div>
+
+<!-- LOGOUT MODAL -->
+<div class="modal-overlay" id="logoutModal">
+  <div class="modal">
+    <i class="fa fa-triangle-exclamation"></i>
+    <h3>Confirm Logout</h3>
+    <p>Are you sure log out?</p>
+
+    <div class="modal-buttons">
+      <button class="btn-cancel" onclick="closeLogoutModal()">Cancel</button>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openPage(page){
+  document.getElementById("contentFrame").src = page;
+}
+
+function toggleSettings(){
+  const dropdown = document.getElementById("settingsDropdown");
+  dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+}
+
+function openLogoutModal(){
+  document.getElementById("logoutModal").style.display = "flex";
+}
+
+function closeLogoutModal(){
+  document.getElementById("logoutModal").style.display = "none";
+}
+
+/* 🔐 REAL LOGOUT */
+function doLogout(){
+  sessionStorage.clear();
+  window.location.replace("login.html");
+}
+</script>
+
+</body>
+</html>
