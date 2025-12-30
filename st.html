@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Product Management</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+/* ==== তোমার আগের CSS অপরিবর্তিত ==== */
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
+body{background:#f3f4f6;padding:30px;}
+.container{max-width:1000px;margin:auto;}
+.header{height:70px;margin-bottom:25px;display:flex;align-items:center;justify-content:center;}
+#toggleFormBtn{background:#22c55e;color:#fff;border:none;border-radius:50px;padding:12px 25px;font-size:16px;cursor:pointer;margin-bottom:20px}
+.form-card{background:#fff;padding:25px;border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,0.1);display:none}
+.input-group{margin-bottom:15px}
+.input-group input{width:100%;padding:12px;border-radius:8px;border:1px solid #ccc}
+table{width:100%;border-collapse:collapse;background:#fff;margin-top:10px}
+thead{background:#14b8a6;color:#fff}
+th,td{padding:12px;text-align:center}
+button.edit{background:#3b82f6;color:#fff;border:none;padding:6px 10px;border-radius:6px}
+button.delete{background:#ef4444;color:#fff;border:none;padding:6px 10px;border-radius:6px}
+#toast{visibility:hidden;min-width:250px;background:#333;color:#fff;text-align:center;border-radius:8px;padding:16px;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%)}
+#toast.show{visibility:visible}
+#toast.success{background:#22c55e}
+#toast.edit{background:#3b82f6}
+#toast.delete{background:#ef4444}
+</style>
+</head>
+
+<body>
+
+<div class="header"><h1>Studio Product</h1></div>
+
+<div class="container">
+<button id="toggleFormBtn"><i class="fa fa-plus"></i> Add Products</button>
+
+<div class="form-card" id="productForm">
+  <div class="input-group"><input id="name" placeholder="Product Name"></div>
+  <div class="input-group"><input id="buy" type="number" placeholder="Purchase Price"></div>
+  <div class="input-group"><input id="sell" type="number" placeholder="Selling Price"></div>
+  <div class="input-group"><input id="stock" type="number" placeholder="Stock"></div>
+  <button onclick="confirmAdd()">Save</button>
+</div>
+
+<input type="text" id="searchBox" placeholder="Search Products....">
+
+<table>
+<thead>
+<tr><th>Name</th><th>Purchase</th><th>Sell</th><th>Stock</th><th>Action</th></tr>
+</thead>
+<tbody id="productTable"></tbody>
+</table>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ===== Supabase Config ===== */
+const supabase = window.supabase.createClient(
+  "https://vwqrvrlltvwkalcuicng.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ3cXJ2cmxsdHZ3a2FsY3VpY25nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4OTkzMTUsImV4cCI6MjA4MTQ3NTMxNX0.bRE80lzmehdyIvrKE2I_RVoNC-VcPfc76OWlRo6Sb6A"
+);
+
+/* ===== UI ===== */
+toggleFormBtn.onclick=()=>{
+  productForm.style.display =
+  productForm.style.display==="block"?"none":"block";
+};
+
+function showToast(msg,type="success"){
+  toast.innerText=msg;
+  toast.className="show "+type;
+  setTimeout(()=>toast.className="",2000);
+}
+
+/* ===== Load Products ===== */
+async function renderProducts(filter=""){
+  const { data } = await supabase
+    .from("products")
+    .select("*")
+    .order("id",{ascending:false});
+
+  productTable.innerHTML="";
+  data.forEach(p=>{
+    const s = filter.toLowerCase();
+    if(p.name.toLowerCase().includes(s)){
+      productTable.innerHTML+=`
+      <tr>
+        <td>${p.name}</td>
+        <td>${p.buy}</td>
+        <td>${p.sell}</td>
+        <td>${p.stock}</td>
+        <td>
+          <button class="edit" onclick="openEdit(${p.id})">Edit</button>
+          <button class="delete" onclick="deleteProduct(${p.id})">Delete</button>
+        </td>
+      </tr>`;
+    }
+  });
+}
+renderProducts();
+
+/* ===== Search ===== */
+searchBox.oninput=e=>renderProducts(e.target.value);
+
+/* ===== Add ===== */
+async function confirmAdd(){
+  if(!name.value||!buy.value||!sell.value||!stock.value){
+    showToast("Fill all the cells","delete");return;
+  }
+  await supabase.from("products").insert({
+    name:name.value,
+    buy:+buy.value,
+    sell:+sell.value,
+    stock:+stock.value
+  });
+  name.value=buy.value=sell.value=stock.value="";
+  renderProducts();
+  showToast("Product added Successfully","success");
+}
+
+/* ===== Edit ===== */
+async function openEdit(id){
+  const { data } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id",id)
+    .single();
+
+  const newName = prompt("Product Name", data.name);
+  if(!newName) return;
+
+  await supabase.from("products")
+    .update({ name:newName })
+    .eq("id",id);
+
+  renderProducts();
+  showToast("Updated Successfully","edit");
+}
+
+/* ===== Delete ===== */
+async function deleteProduct(id){
+  if(confirm("Confirm Delete the Product?")){
+    await supabase.from("products").delete().eq("id",id);
+    renderProducts();
+    showToast("Deleted successfully","delete");
+  }
+}
+</script>
+
+</body>
+</html>
