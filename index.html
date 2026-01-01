@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Job Apply Form</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  font-family: Arial;
+  background:#f2f4f7;
+  padding:20px;
+}
+form{
+  max-width:500px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,.1);
+}
+h2{text-align:center;margin-bottom:15px}
+input,select,button{
+  width:100%;
+  padding:10px;
+  margin-bottom:12px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+button{
+  background:#2563eb;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+}
+button:hover{opacity:.9}
+</style>
+</head>
+
+<body>
+
+<form id="applyForm">
+  <h2>চাকরির আবেদন ফরম</h2>
+
+  <input type="text" placeholder="পূর্ণ নাম" required>
+  <input type="date" required>
+
+  <select id="division" required>
+    <option value="">বিভাগ নির্বাচন করুন</option>
+  </select>
+
+  <select id="district" required disabled>
+    <option value="">জেলা নির্বাচন করুন</option>
+  </select>
+
+  <select id="upazila" required disabled>
+    <option value="">উপজেলা নির্বাচন করুন</option>
+  </select>
+
+  <select id="union" required disabled>
+    <option value="">ইউনিয়ন নির্বাচন করুন</option>
+  </select>
+
+  <select id="ward" required disabled>
+    <option value="">ওয়ার্ড নির্বাচন করুন</option>
+  </select>
+
+  <button type="submit">আবেদন জমা দিন</button>
+</form>
+
+<script>
+let locationData;
+
+fetch("bd_locations.json")
+  .then(res => res.json())
+  .then(data => {
+    locationData = data;
+    loadDivision();
+  });
+
+const division = document.getElementById("division");
+const district = document.getElementById("district");
+const upazila = document.getElementById("upazila");
+const union = document.getElementById("union");
+const ward = document.getElementById("ward");
+
+function loadDivision(){
+  for(let d in locationData){
+    division.innerHTML += `<option value="${d}">${d}</option>`;
+  }
+}
+
+division.onchange = () =>{
+  reset(district, upazila, union, ward);
+  if(!division.value) return;
+  district.disabled = false;
+
+  for(let z in locationData[division.value]){
+    district.innerHTML += `<option value="${z}">${z}</option>`;
+  }
+}
+
+district.onchange = () =>{
+  reset(upazila, union, ward);
+  if(!district.value) return;
+  upazila.disabled = false;
+
+  for(let u in locationData[division.value][district.value]){
+    upazila.innerHTML += `<option value="${u}">${u}</option>`;
+  }
+}
+
+upazila.onchange = () =>{
+  reset(union, ward);
+  if(!upazila.value) return;
+  union.disabled = false;
+
+  for(let un in locationData[division.value][district.value][upazila.value]){
+    union.innerHTML += `<option value="${un}">${un}</option>`;
+  }
+}
+
+union.onchange = () =>{
+  reset(ward);
+  if(!union.value) return;
+  ward.disabled = false;
+
+  const wards = locationData[division.value][district.value][upazila.value][union.value];
+  wards.forEach(w=>{
+    ward.innerHTML += `<option value="${w}">ওয়ার্ড ${w}</option>`;
+  });
+}
+
+function reset(...elements){
+  elements.forEach(el=>{
+    el.innerHTML = `<option value="">নির্বাচন করুন</option>`;
+    el.disabled = true;
+  });
+}
+</script>
+
+</body>
+</html>
